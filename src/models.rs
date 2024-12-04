@@ -36,11 +36,8 @@ pub struct PartResponse {
     #[serde(rename = "type")]
     pub r#type: String,
 
-    #[serde(rename = "brand")]
-    pub brand: String,
-
-    #[serde(rename = "model")]
-    pub model: String,
+    #[serde(rename = "name")]
+    pub name: String,
 
     #[serde(rename = "attributes")]
     pub attributes: std::collections::HashMap<String, crate::types::Object>,
@@ -53,8 +50,7 @@ impl PartResponse {
         created_at: chrono::DateTime<chrono::Utc>,
         updated_at: chrono::DateTime<chrono::Utc>,
         r#type: String,
-        brand: String,
-        model: String,
+        name: String,
         attributes: std::collections::HashMap<String, crate::types::Object>,
     ) -> PartResponse {
         PartResponse {
@@ -62,8 +58,7 @@ impl PartResponse {
             created_at,
             updated_at,
             r#type,
-            brand,
-            model,
+            name,
             attributes,
         }
     }
@@ -82,10 +77,8 @@ impl std::fmt::Display for PartResponse {
             // Skipping updatedAt in query parameter serialization
             Some("type".to_string()),
             Some(self.r#type.to_string()),
-            Some("brand".to_string()),
-            Some(self.brand.to_string()),
-            Some("model".to_string()),
-            Some(self.model.to_string()),
+            Some("name".to_string()),
+            Some(self.name.to_string()),
             // Skipping attributes in query parameter serialization
             // Skipping attributes in query parameter serialization
         ];
@@ -113,8 +106,7 @@ impl std::str::FromStr for PartResponse {
             pub created_at: Vec<chrono::DateTime<chrono::Utc>>,
             pub updated_at: Vec<chrono::DateTime<chrono::Utc>>,
             pub r#type: Vec<String>,
-            pub brand: Vec<String>,
-            pub model: Vec<String>,
+            pub name: Vec<String>,
             pub attributes: Vec<std::collections::HashMap<String, crate::types::Object>>,
         }
 
@@ -156,11 +148,7 @@ impl std::str::FromStr for PartResponse {
                         <String as std::str::FromStr>::from_str(val).map_err(|x| x.to_string())?,
                     ),
                     #[allow(clippy::redundant_clone)]
-                    "brand" => intermediate_rep.brand.push(
-                        <String as std::str::FromStr>::from_str(val).map_err(|x| x.to_string())?,
-                    ),
-                    #[allow(clippy::redundant_clone)]
-                    "model" => intermediate_rep.model.push(
+                    "name" => intermediate_rep.name.push(
                         <String as std::str::FromStr>::from_str(val).map_err(|x| x.to_string())?,
                     ),
                     "attributes" => {
@@ -203,16 +191,11 @@ impl std::str::FromStr for PartResponse {
                 .into_iter()
                 .next()
                 .ok_or_else(|| "type missing in PartResponse".to_string())?,
-            brand: intermediate_rep
-                .brand
+            name: intermediate_rep
+                .name
                 .into_iter()
                 .next()
-                .ok_or_else(|| "brand missing in PartResponse".to_string())?,
-            model: intermediate_rep
-                .model
-                .into_iter()
-                .next()
-                .ok_or_else(|| "model missing in PartResponse".to_string())?,
+                .ok_or_else(|| "name missing in PartResponse".to_string())?,
             attributes: intermediate_rep
                 .attributes
                 .into_iter()

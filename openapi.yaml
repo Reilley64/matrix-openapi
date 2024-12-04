@@ -208,9 +208,7 @@ components:
           format: date-time
         type:
           type: string
-        brand:
-          type: string
-        model:
+        name:
           type: string
         attributes:
           type: object
@@ -220,6 +218,5 @@ components:
         - createdAt
         - updatedAt
         - type
-        - brand
-        - model
+        - name
         - attributes
