@@ -14,6 +14,10 @@ paths:
           name: search
           schema:
             type: string
+        - in: query
+          name: type
+          schema:
+            $ref: "#/components/schemas/PartType"
       responses:
         "200":
           description: Ok
@@ -195,6 +199,14 @@ components:
         - dateOfBirth
         - address
 
+    PartType:
+      type: string
+      enum:
+        - CentralProcessingUnit
+        - CentralProcessingUnitCooler
+        - GraphicsProcessingUnit
+        - Storage
+
     PartResponse:
       type: object
       properties:
@@ -207,7 +219,7 @@ components:
           type: string
           format: date-time
         type:
-          type: string
+          $ref: "#/components/schemas/PartType"
         name:
           type: string
         attributes:

@@ -13,6 +13,9 @@ pub struct PartsGetQueryParams {
     #[serde(rename = "search")]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub search: Option<String>,
+    #[serde(rename = "type")]
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub r#type: Option<models::PartType>,
 }
 
 #[derive(Debug, Clone, PartialEq, serde::Serialize, serde::Deserialize, validator::Validate)]
@@ -34,7 +37,7 @@ pub struct PartResponse {
     pub updated_at: chrono::DateTime<chrono::Utc>,
 
     #[serde(rename = "type")]
-    pub r#type: String,
+    pub r#type: models::PartType,
 
     #[serde(rename = "name")]
     pub name: String,
@@ -49,7 +52,7 @@ impl PartResponse {
         id: String,
         created_at: chrono::DateTime<chrono::Utc>,
         updated_at: chrono::DateTime<chrono::Utc>,
-        r#type: String,
+        r#type: models::PartType,
         name: String,
         attributes: std::collections::HashMap<String, crate::types::Object>,
     ) -> PartResponse {
@@ -75,8 +78,8 @@ impl std::fmt::Display for PartResponse {
             // Skipping createdAt in query parameter serialization
 
             // Skipping updatedAt in query parameter serialization
-            Some("type".to_string()),
-            Some(self.r#type.to_string()),
+
+            // Skipping type in query parameter serialization
             Some("name".to_string()),
             Some(self.name.to_string()),
             // Skipping attributes in query parameter serialization
@@ -105,7 +108,7 @@ impl std::str::FromStr for PartResponse {
             pub id: Vec<String>,
             pub created_at: Vec<chrono::DateTime<chrono::Utc>>,
             pub updated_at: Vec<chrono::DateTime<chrono::Utc>>,
-            pub r#type: Vec<String>,
+            pub r#type: Vec<models::PartType>,
             pub name: Vec<String>,
             pub attributes: Vec<std::collections::HashMap<String, crate::types::Object>>,
         }
@@ -145,7 +148,8 @@ impl std::str::FromStr for PartResponse {
                     ),
                     #[allow(clippy::redundant_clone)]
                     "type" => intermediate_rep.r#type.push(
-                        <String as std::str::FromStr>::from_str(val).map_err(|x| x.to_string())?,
+                        <models::PartType as std::str::FromStr>::from_str(val)
+                            .map_err(|x| x.to_string())?,
                     ),
                     #[allow(clippy::redundant_clone)]
                     "name" => intermediate_rep.name.push(
@@ -246,6 +250,53 @@ impl std::convert::TryFrom<HeaderValue> for header::IntoHeaderValue<PartResponse
                 "Unable to convert header: {:?} to string: {}",
                 hdr_value, e
             )),
+        }
+    }
+}
+
+/// Enumeration of values.
+/// Since this enum's variants do not hold data, we can easily define them as `#[repr(C)]`
+/// which helps with FFI.
+#[allow(non_camel_case_types)]
+#[repr(C)]
+#[derive(
+    Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, serde::Serialize, serde::Deserialize,
+)]
+#[cfg_attr(feature = "conversion", derive(frunk_enum_derive::LabelledGenericEnum))]
+pub enum PartType {
+    #[serde(rename = "CentralProcessingUnit")]
+    CentralProcessingUnit,
+    #[serde(rename = "CentralProcessingUnitCooler")]
+    CentralProcessingUnitCooler,
+    #[serde(rename = "GraphicsProcessingUnit")]
+    GraphicsProcessingUnit,
+    #[serde(rename = "Storage")]
+    Storage,
+}
+
+impl std::fmt::Display for PartType {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match *self {
+            PartType::CentralProcessingUnit => write!(f, "CentralProcessingUnit"),
+            PartType::CentralProcessingUnitCooler => write!(f, "CentralProcessingUnitCooler"),
+            PartType::GraphicsProcessingUnit => write!(f, "GraphicsProcessingUnit"),
+            PartType::Storage => write!(f, "Storage"),
+        }
+    }
+}
+
+impl std::str::FromStr for PartType {
+    type Err = String;
+
+    fn from_str(s: &str) -> std::result::Result<Self, Self::Err> {
+        match s {
+            "CentralProcessingUnit" => std::result::Result::Ok(PartType::CentralProcessingUnit),
+            "CentralProcessingUnitCooler" => {
+                std::result::Result::Ok(PartType::CentralProcessingUnitCooler)
+            }
+            "GraphicsProcessingUnit" => std::result::Result::Ok(PartType::GraphicsProcessingUnit),
+            "Storage" => std::result::Result::Ok(PartType::Storage),
+            _ => std::result::Result::Err(format!("Value not valid: {}", s)),
         }
     }
 }
