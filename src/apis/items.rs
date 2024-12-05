@@ -10,15 +10,11 @@ use crate::{models, types::*};
 #[derive(Debug, PartialEq, Serialize, Deserialize)]
 #[must_use]
 #[allow(clippy::large_enum_variant)]
-pub enum UsersPostResponse {
+pub enum ItemsGetResponse {
     /// Ok
-    Status200_Ok(models::UserResponse),
+    Status200_Ok(Vec<models::ItemResponse>),
     /// Bad Request
     Status400_BadRequest(models::Problem),
-    /// Unauthorized
-    Status401_Unauthorized,
-    /// Conflict
-    Status409_Conflict(models::Problem),
     /// Internal Server Error
     Status500_InternalServerError(models::Problem),
 }
@@ -26,39 +22,41 @@ pub enum UsersPostResponse {
 #[derive(Debug, PartialEq, Serialize, Deserialize)]
 #[must_use]
 #[allow(clippy::large_enum_variant)]
-pub enum UsersUserIdGetResponse {
+pub enum ItemsPostResponse {
     /// Ok
-    Status200_Ok(models::UserResponse),
+    Status200_Ok(models::ItemResponse),
     /// Bad Request
     Status400_BadRequest(models::Problem),
+    /// Unauthorized
+    Status401_Unauthorized,
     /// Not Found
     Status404_NotFound(models::Problem),
     /// Internal Server Error
     Status500_InternalServerError(models::Problem),
 }
 
-/// Users
+/// Items
 #[async_trait]
 #[allow(clippy::ptr_arg)]
-pub trait Users {
+pub trait Items {
     type Claims;
 
-    /// UsersPost - POST /users
-    async fn users_post(
+    /// ItemsGet - GET /items
+    async fn items_get(
+        &self,
+        method: Method,
+        host: Host,
+        cookies: CookieJar,
+        query_params: models::ItemsGetQueryParams,
+    ) -> Result<ItemsGetResponse, ()>;
+
+    /// ItemsPost - POST /items
+    async fn items_post(
         &self,
         method: Method,
         host: Host,
         cookies: CookieJar,
         claims: Self::Claims,
-        body: models::UserRequest,
-    ) -> Result<UsersPostResponse, ()>;
-
-    /// UsersUserIdGet - GET /users/{userId}
-    async fn users_user_id_get(
-        &self,
-        method: Method,
-        host: Host,
-        cookies: CookieJar,
-        path_params: models::UsersUserIdGetPathParams,
-    ) -> Result<UsersUserIdGetResponse, ()>;
+        body: models::ItemRequest,
+    ) -> Result<ItemsPostResponse, ()>;
 }

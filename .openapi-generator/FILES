@@ -1,6 +1,7 @@
 .gitignore
 Cargo.toml
 README.md
+src/apis/items.rs
 src/apis/mod.rs
 src/apis/parts.rs
 src/apis/users.rs
