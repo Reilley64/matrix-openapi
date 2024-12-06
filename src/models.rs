@@ -502,6 +502,9 @@ pub struct ItemResponse {
     #[serde(rename = "description")]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub description: Option<String>,
+
+    #[serde(rename = "images")]
+    pub images: Vec<String>,
 }
 
 impl ItemResponse {
@@ -514,6 +517,7 @@ impl ItemResponse {
         part: models::PartResponse,
         default_price: models::ItemPriceResponse,
         condition: models::Condition,
+        images: Vec<String>,
     ) -> ItemResponse {
         ItemResponse {
             id,
@@ -524,6 +528,7 @@ impl ItemResponse {
             default_price,
             condition,
             description: None,
+            images,
         }
     }
 }
@@ -550,6 +555,14 @@ impl std::fmt::Display for ItemResponse {
             self.description
                 .as_ref()
                 .map(|description| ["description".to_string(), description.to_string()].join(",")),
+            Some("images".to_string()),
+            Some(
+                self.images
+                    .iter()
+                    .map(|x| x.to_string())
+                    .collect::<Vec<_>>()
+                    .join(","),
+            ),
         ];
 
         write!(
@@ -579,6 +592,7 @@ impl std::str::FromStr for ItemResponse {
             pub default_price: Vec<models::ItemPriceResponse>,
             pub condition: Vec<models::Condition>,
             pub description: Vec<String>,
+            pub images: Vec<Vec<String>>,
         }
 
         let mut intermediate_rep = IntermediateRep::default();
@@ -638,6 +652,12 @@ impl std::str::FromStr for ItemResponse {
                     "description" => intermediate_rep.description.push(
                         <String as std::str::FromStr>::from_str(val).map_err(|x| x.to_string())?,
                     ),
+                    "images" => {
+                        return std::result::Result::Err(
+                            "Parsing a container in this style is not supported in ItemResponse"
+                                .to_string(),
+                        )
+                    }
                     _ => {
                         return std::result::Result::Err(
                             "Unexpected key while parsing ItemResponse".to_string(),
@@ -688,6 +708,11 @@ impl std::str::FromStr for ItemResponse {
                 .next()
                 .ok_or_else(|| "condition missing in ItemResponse".to_string())?,
             description: intermediate_rep.description.into_iter().next(),
+            images: intermediate_rep
+                .images
+                .into_iter()
+                .next()
+                .ok_or_else(|| "images missing in ItemResponse".to_string())?,
         })
     }
 }

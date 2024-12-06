@@ -329,6 +329,10 @@ components:
           $ref: "#/components/schemas/Condition"
         description:
           type: string
+        images:
+          type: array
+          items:
+            type: string
       required:
         - id
         - createdAt
@@ -337,6 +341,7 @@ components:
         - part
         - defaultPrice
         - condition
+        - images
 
     ItemRequest:
       type: object
