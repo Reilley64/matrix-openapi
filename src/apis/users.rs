@@ -10,6 +10,22 @@ use crate::{models, types::*};
 #[derive(Debug, PartialEq, Serialize, Deserialize)]
 #[must_use]
 #[allow(clippy::large_enum_variant)]
+pub enum UsersMeGetResponse {
+    /// Ok
+    Status200_Ok(models::UserResponse),
+    /// Bad Request
+    Status400_BadRequest(models::Problem),
+    /// Unauthorized
+    Status401_Unauthorized,
+    /// Not Found
+    Status404_NotFound(models::Problem),
+    /// Internal Server Error
+    Status500_InternalServerError(models::Problem),
+}
+
+#[derive(Debug, PartialEq, Serialize, Deserialize)]
+#[must_use]
+#[allow(clippy::large_enum_variant)]
 pub enum UsersPostResponse {
     /// Ok
     Status200_Ok(models::UserResponse),
@@ -42,6 +58,15 @@ pub enum UsersUserIdGetResponse {
 #[allow(clippy::ptr_arg)]
 pub trait Users {
     type Claims;
+
+    /// UsersMeGet - GET /users/me
+    async fn users_me_get(
+        &self,
+        method: Method,
+        host: Host,
+        cookies: CookieJar,
+        claims: Self::Claims,
+    ) -> Result<UsersMeGetResponse, ()>;
 
     /// UsersPost - POST /users
     async fn users_post(
